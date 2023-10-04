@@ -1,4 +1,7 @@
 // Función para cargar usuarios desde el endpoint
+const loadedComments = new Set();
+
+
 async function loadUsers() {
     try {
         const response = await fetch('https://jsonplaceholder.typicode.com/users');
@@ -56,29 +59,29 @@ async function loadUserDetails(userId) {
                 <h6>${post.title}</h6>
                 <p>${post.body}</p>
 
-                <div class="row pt-0 pb-4">
+                <div class="row pt-0 pb-4 border-bottom">
                                <div class="col">
                                                 <div class="d-flex align-items-center">
-                <i class="bi-solid bi-chat" data-post-id="${post.id}"></i>
-                                                    <span class="ps-2">1</span>
+                <i class="bi-solid bi-chat cursor-hand" data-post-id="${post.id}"></i>
+                                                    <span class="ps-2">5</span>
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <div class="d-flex align-items-center">
                                                     <i class="bi bi-repeat bi-share-fill"></i>
-                                                    <span class="ps-2">1</span>
+                                                    <span class="ps-2"></span>
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <div class="d-flex align-items-center">
                                                     <i class="bi-solid bi-heart"></i>
-                                                    <span class="ps-2">7</span>
+                                                    <span class="ps-2"></span>
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <div class="d-flex align-items-center">
                                                     <i class="bi bi-reception-2 bi-align-bottom"></i>
-                                                    <span class="ps-2">1.794</span>
+                                                    <span class="ps-2"></span>
                                                 </div>
                                             </div>
                                             <div class="col">
@@ -93,7 +96,19 @@ async function loadUserDetails(userId) {
                 </ul>
             `;
 
-            postItem.querySelector('i').addEventListener('click', () => loadComments(post.id));
+            postItem.querySelector('i').addEventListener('click', () => {
+    const postId = post.id;
+    if (loadedComments.has(postId)) {
+        // Si ya se han cargado los comentarios, eliminarlos
+        const commentsList = document.getElementById(`comments-${postId}`);
+        commentsList.innerHTML = '';
+        loadedComments.delete(postId); // Eliminar el postId del conjunto
+    } else {
+        // Si no se han cargado los comentarios, cargarlos
+        loadComments(postId);
+        loadedComments.add(postId); // Agregar el postId al conjunto
+    }
+});
             postList.appendChild(postItem);
         });
 
